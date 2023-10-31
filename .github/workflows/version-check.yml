@@ -1,0 +1,34 @@
+name: Check for New Binary Versions
+
+on:
+  push:
+  workflow_dispatch: # On demand
+  schedule:
+    - cron: '0 0 * * *'  # Runs every day at midnight
+
+jobs:
+  check-versions:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout local repo
+      uses: actions/checkout@v4.1.1
+      with:
+        path: local
+        sparse-checkout: |
+          .git
+
+    - name: Checkout upstream repo
+      uses: actions/checkout@v4.1.1
+      with:
+        repository: kubernetes/kubernetes
+        path: upstream
+        sparse-checkout: |
+          .git
+
+    - name: Get versions from both repo
+      run: |
+        LOCAL_VERSIONS=($(git -C local tag -l | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | sort -V | uniq))
+        UPSTREAM_VERSIONS=($(git -C upstream tag -l | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | sort -V | uniq))
+        echo "Local Versions: ${LOCAL_VERSIONS[@]}" > local_versions.txt
+        echo "Upstream Versions: ${UPSTREAM_VERSIONS[@]}" > upstream_versions.txt
