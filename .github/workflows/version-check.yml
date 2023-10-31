@@ -28,10 +28,14 @@ jobs:
 
     - name: Get versions from both repo
       run: |
+        ls -ltr local/
+        ls -ltr upstream/
         LOCAL_VERSIONS=($(git -C local tag -l | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | sort -V | uniq))
         UPSTREAM_VERSIONS=($(git -C upstream tag -l | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | sort -V | uniq))
         echo "Local Versions: ${LOCAL_VERSIONS[@]}" > local_versions.txt
+        cat local_versions.txt
         echo "Upstream Versions: ${UPSTREAM_VERSIONS[@]}" > upstream_versions.txt
+        cat upstream_versions.txt
         DIFF_VERSIONS=($(diff local_versions.txt upstream_versions.txt | awk '{ print $2 }'))
         echo "${DIFF_VERSIONS[@]}" > diff_versions.txt
         cat diff_versions.txt
