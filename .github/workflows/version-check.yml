@@ -1,4 +1,4 @@
-name: Check for New Binary Versions
+name: version-check
 
 on:
   push:
@@ -17,6 +17,8 @@ jobs:
         path: local
         sparse-checkout: |
           .git
+        sparse-checkout-cone-mode: false
+        fetch-tags: true
 
     - name: Checkout upstream repo
       uses: actions/checkout@v4.1.1
@@ -25,6 +27,8 @@ jobs:
         path: upstream
         sparse-checkout: |
           .git
+        sparse-checkout-cone-mode: false
+        fetch-tags: true
 
     - name: Get versions from both repo
       run: |
